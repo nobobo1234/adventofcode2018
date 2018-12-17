@@ -7,14 +7,14 @@ const part1 = () => {
     }
     const ids = fs.readFileSync(`${__dirname}/day2input.txt`).toString().split('\n')
         .forEach(id => {
-            const idarray = id.split('').sort();
+            const idArray = id.split('').sort();
             let i = 0, 
-                letter = idarray[0], 
+                letter = idArray[0], 
                 count = 0, 
                 twiceTaken = false, 
                 thriceTaken = false;
-            while(i !== idarray.length) {
-                if(letter !== idarray[i]) {
+            while(i !== idArray.length) {
+                if(letter !== idArray[i]) {
                     if(count === 2 && !twiceTaken) {
                         counts.twice++;
                         twiceTaken = true;
@@ -23,14 +23,22 @@ const part1 = () => {
                         thriceTaken = true;
                     }
                     count = 0;
-                    letter = idarray[i];
-                } else if(letter === idarray[i]) {
+                    letter = idArray[i];
+                } else if(letter === idArray[i]) {
                     i++;
                     count += 1;
                 }
             }
         })
     return counts.twice * counts.thrice;
+}
+
+const part2 = () => {
+    const strings = []
+    const ids = fs.readFileSync(`${__dirname}/day2input.txt`).toString().split('\n')
+        .forEach(id => {
+            const otherIds = 
+        })
 }
 
 console.log(part1());
