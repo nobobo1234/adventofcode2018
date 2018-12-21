@@ -98,4 +98,85 @@ const part1 = () => {
     return highestGuardId * highestMinute;
 }
 
-console.log(part1())
+const part2 = () => {
+    // Sort all the dates
+    const dates = fs.readFileSync(`${__dirname}/day4input.txt`).toString().split('\n')
+        .sort((a, b) => {
+            const dateStringA = inBetweenString(a, '[', ']'),
+                dateStringB = inBetweenString(b, '[', ']'),
+                dateA = new Date(dateStringA),
+                dateB = new Date(dateStringB);
+            return dateA - dateB;
+        });
+
+
+    // Find minutes all the guards sleep and store them in a big Map
+    const minutesAllGuards = {};
+    let guardId = 0,
+        prevDate;
+    highestGuardSleeps = false;
+    for(date of dates) {
+        const action = date.substring(date.lastIndexOf(']')+2, date.length);
+        if(action.startsWith('Guard')) {
+            guardId = inBetweenString(date, '#', ' begins');
+            prevDate = new Date(inBetweenString(date, '[', ']'));
+        } else if(action.startsWith('falls asleep')) {
+            prevDate = new Date(inBetweenString(date, '[', ']'));
+        } else if(action.startsWith('wakes up')) {
+            const awakeDate = new Date(inBetweenString(date, '[', ']'));
+            getMinutesInBetween(prevDate.getMinutes(), awakeDate.getMinutes()-1)
+                .forEach(min => {
+                    if(minutesAllGuards.hasOwnProperty(guardId)) {
+                        const minuteObject = minutesAllGuards[guardId];
+                        const hasMinute = minuteObject.hasOwnProperty(min);
+                        minutesAllGuards[guardId] = {
+                            ...minuteObject,
+                            [min]: hasMinute ? minuteObject[min] += 1 : 1
+                        }
+                    } else {
+                        minutesAllGuards[guardId] = { [min]: 1}
+                    }
+                });
+        }
+    }
+
+
+    // Find the best minute of all the guards
+    const bestMinuteGuards = {}
+    // console.log(minutesAllGuards.values())
+    Object.entries(minutesAllGuards).forEach(([guardId, minutes]) => {
+        let highestMinute = 0,
+            highestMinuteCount = 0;
+        Object.entries(minutes).forEach(([key, value]) => {
+            if(value > highestMinuteCount) {
+                highestMinuteCount = value;
+                highestMinute = key;
+            }
+            bestMinuteGuards[guardId] = [highestMinute, highestMinuteCount];
+        });
+    })
+
+    // Find the best minute _out_ of all the guards
+    let bestMinute = {
+        minute: 0,
+        count: 0,
+        guardId: 0
+    };
+    Object.entries(bestMinuteGuards).forEach(([guardId, minuteValues]) => {
+        if(minuteValues[1] > bestMinute.count) {
+            bestMinute = {
+                minute: minuteValues[0],
+                count: minuteValues[1],
+                guardId
+            }
+        }
+    })
+
+    console.log(bestMinute);
+
+
+    return bestMinute.minute * bestMinute.guardId;
+}
+
+console.log(`The solution to day 4 part 1 is ${part1()}`);
+console.log(`The solution to day 4 part 2 is ${part2()}`);
