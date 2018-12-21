@@ -5,7 +5,20 @@ const inBetweenString = (string, char1, char2) => {
 }
 
 const getMinutesInBetween = (min1, min2) => {
-
+    let array = [];
+    if(min1 > min2) {
+        for(let i = min1; i < 60; i++) {
+            array.push(i);
+        }
+        for(let i = 0; i <= min2; i++) {
+            array.push(i);
+        }
+    } else {
+        for(let i = min1; i <= min2; i++) {
+            array.push(i);
+        }
+    }
+    return array;
 }
 
 const part1 = () => {
@@ -32,7 +45,7 @@ const part1 = () => {
             prevDate = new Date(inBetweenString(date, '[', ']'));
         } else if(action.startsWith('wakes up')) {
             const awakeDate = new Date(inBetweenString(date, '[', ']'));
-            const diffMins = Math.floor((awakeDate - prevDate)/60000);
+            const diffMins = Math.floor((awakeDate - prevDate)/60000) - 1;
             if(guardSleep.has(guardId)) {
                 guardSleep.set(guardId, guardSleep.get(guardId) + diffMins);
             } else {
@@ -44,7 +57,7 @@ const part1 = () => {
     // Find guard who slept the most
     let highestGuardId = guardSleep.keys().next().value, 
         highestGuardMins = guardSleep.get(highestGuardId);
-    guardSleep.forEach((guardId, mins) => {
+    guardSleep.forEach((mins, guardId) => {
         if(highestGuardMins < mins){
             highestGuardId = guardId;
             highestGuardMins = mins;
@@ -53,7 +66,36 @@ const part1 = () => {
     
 
     // Find minute guard sleeps the most
-    
+    const minutes = {};
+    highestGuardSleeps = false;
+    for(date of dates) {
+        const action = date.substring(date.lastIndexOf(']')+2, date.length);
+        if(action.startsWith(`Guard #${highestGuardId}`)) {
+            highestGuardSleeps = true;
+            prevDate = new Date(inBetweenString(date, '[', ']'));
+        } else if(highestGuardSleeps && action.startsWith('falls asleep')) {
+            prevDate = new Date(inBetweenString(date, '[', ']'));
+        } else if(highestGuardSleeps && action.startsWith('wakes up')) {
+            const awakeDate = new Date(inBetweenString(date, '[', ']'));
+            getMinutesInBetween(prevDate.getMinutes(), awakeDate.getMinutes()-1)
+                .forEach(min => {
+                    minutes[min] ? minutes[min] += 1 : minutes[min] = 1;
+                });
+        } else {
+            highestGuardSleeps = false
+        }
+    }
+
+    let highestMinute = 0,
+        highestMinuteCount = 0;
+    Object.entries(minutes).forEach(([key, value]) => {
+        if(value > highestMinuteCount) {
+            highestMinuteCount = value;
+            highestMinute = key;
+        }
+    });
+
+    return highestGuardId * highestMinute;
 }
 
 console.log(part1())
