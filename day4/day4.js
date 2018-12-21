@@ -172,9 +172,6 @@ const part2 = () => {
         }
     })
 
-    console.log(bestMinute);
-
-
     return bestMinute.minute * bestMinute.guardId;
 }
 
