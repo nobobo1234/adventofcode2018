@@ -7,8 +7,9 @@ const sameChar = (char1, char2) => char1.toLowerCase() === char2.toLowerCase();
 const part1 = () => {
     const polymer = fs.readFileSync(`${__dirname}/day5input.txt`).toString().split('');
     for(let i = polymer.length - 1; i > 0; i--) {
-        const currU = polymer[i];
-        const prevU = polymer[i-1];
+        // Using ternary to prevent index from becoming the length if the first two elements are removed
+        const currU = i !== polymer.length ? polymer[i] : polymer[i-1];
+        const prevU = i !== polymer.length ? polymer[i-1] : polymer[i-2];
         if(isUpperCase(currU) && isLowerCase(prevU) && sameChar(currU, prevU)) {
             polymer.splice(i-1, 2);
         } else if(isLowerCase(currU) && isUpperCase(prevU) && sameChar(currU, prevU)) {
@@ -25,6 +26,7 @@ const part2 = () => {
         const letter = String.fromCharCode(i);
         const filteredPolymer = polymer.filter(unit => !sameChar(letter, unit));
         for(let i = filteredPolymer.length - 1; i > 0; i--) {
+            // Using ternary to prevent index from becoming the length if the first two elements are removed
             const currU = i !== filteredPolymer.length ? filteredPolymer[i] : filteredPolymer[i-1];
             const prevU = i !== filteredPolymer.length ? filteredPolymer[i-1] : filteredPolymer[i-2];
             if(isUpperCase(currU) && isLowerCase(prevU) && sameChar(currU, prevU)) {
