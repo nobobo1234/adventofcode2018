@@ -10,7 +10,6 @@ const part1 = () => {
         if(coordinate[0] < minX) minX = coordinate[0];
         if(coordinate[1] < minY) minY = coordinate[1];
     }
-    console.log(`Min: (${minX}, ${minY}), Max: (${maxX}, ${maxY})`)
     const areas = Array.from({ length: coordinates.length }, e => 0);
     for(let y = minY; y <= maxY; y++) {
         for(let x = minX; x <= maxX; x++) {
@@ -38,4 +37,31 @@ const part1 = () => {
     return Math.max(...areas.filter((e, i) => e !== null));
 }
 
-console.log(part1());
+const part2 = () => {
+    const coordinates = fs.readFileSync(`${__dirname}/day6input.txt`).toString().split('\n')
+        .map(coordinate => coordinate.split(', ').map(Number));
+    let maxX = 0, maxY = 0, minX = coordinates[0][0], minY = coordinates[0][1];
+    for(const coordinate of coordinates) {
+        if(coordinate[0] > maxX) maxX = coordinate[0];
+        if(coordinate[1] > maxY) maxY = coordinate[1];
+        if(coordinate[0] < minX) minX = coordinate[0];
+        if(coordinate[1] < minY) minY = coordinate[1];
+    }
+    let size = 0;
+    for(let y = minY; y <= maxY; y++) {
+        for(let x = minX; x <= maxX; x++) {
+            let distSum = 0;
+            for(let i = 0; i < coordinates.length; i++) {
+                const point = coordinates[i];
+                const dist = Math.abs(x - point[0])+Math.abs(y-point[1]);
+                distSum += dist;
+            }
+            if(distSum < 10000) size++;
+        }
+    }
+    console.log((maxX-minX)*(maxY-minY))
+    return size;
+}
+
+console.log(`The solution to day 6 part 1 is: ${part1()}`);
+console.log(`The solution to day 6 part 2 is: ${part2()}`);
