@@ -3,7 +3,7 @@ const fs = require('fs');
 const flatten = array => [].concat(...array);
 
 const claimsTo2DArray = (claims) => {
-    const array = Array.from({ length: 1000 }, a => Array.from({ length: 1000 }))
+    const array = Array.from({ length: 1000 }, a => Array.from({ length: 1000 }));
     for(const claim of claims) {
         const coordinates = claim.coordinates,
             dimensions = claim.dimensions;
